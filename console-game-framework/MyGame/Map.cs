@@ -5,16 +5,27 @@ using Framework.Engine;
 
 class Map : GameObject
 {
-    private List<char> _tiles = new List<char>();
+    private List<Tile> _tiles;
 
     public Map(Scene scene) : base(scene)
     {
         Name = "Map";
 
-        for(int i = 0; i < 143; i++)
+        _tiles = new List<Tile>()
         {
-            _tiles.Add('□');
-        }
+            new Tile(), new Tile(), new Tile(), new Tile(), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile(), new Tile(), new Tile(),
+            new Tile(), new Tile("NotDestroyable"), new Tile(), new Tile(), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile(), new Tile("NotDestroyable"), new Tile(),
+            new Tile(), new Tile(), new Tile(), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile(), new Tile(), new Tile(), new Tile(), new Tile(),
+            new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile(), new Tile("NotDestroyable"), new Tile("Destroyable"),
+            new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile(), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"),
+            new Tile(), new Tile(), new Tile(), new Tile(), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"),
+            new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile(), new Tile("Destroyable"), new Tile(), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"), new Tile("Destroyable"),
+            new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile(), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"),
+            new Tile(), new Tile(), new Tile(), new Tile(), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile(), new Tile(), new Tile(),
+            new Tile(), new Tile(), new Tile(), new Tile(), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile(), new Tile(), new Tile(),
+            new Tile(), new Tile(), new Tile(), new Tile(), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("NotDestroyable"), new Tile("Destroyable"), new Tile(), new Tile(), new Tile()
+
+        };
     }
 
     public override void Draw(ScreenBuffer buffer)
@@ -25,7 +36,7 @@ class Map : GameObject
             {
                 Console.WriteLine();
             }
-            Console.Write(_tiles[i]);
+            Console.Write(_tiles[i].TileType);
         }
     }
 

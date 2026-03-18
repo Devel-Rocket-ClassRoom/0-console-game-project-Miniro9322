@@ -3,17 +3,25 @@ using System.Collections.Generic;
 using System.Text;
 using Framework.Engine;
 
-class Block : GameObject
+class Tile
 {
-    private bool _isDestroyable;
+    private bool _isDestroyable = false;
+    public char TileType { get; private set; }
 
-    public Block(Scene scene) : base(scene) { }
-
-    public override void Draw(ScreenBuffer buffer)
+    public Tile(string tileType = null)
     {
-    }
-
-    public override void Update(float deltaTime)
-    {
+        switch (tileType)
+        {
+            case "Destroyable":
+                TileType = '▣';
+                _isDestroyable = true;
+                break;
+            case "NotDestroyable":
+                TileType = '■';
+                break;
+            default:
+                TileType = '□';
+                break;
+        }
     }
 }
