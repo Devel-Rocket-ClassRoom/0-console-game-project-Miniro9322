@@ -1,1 +1,1 @@
-return;
+new BomberMan().Run();
