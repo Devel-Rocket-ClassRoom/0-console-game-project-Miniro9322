@@ -7,6 +7,8 @@ class PlayScene : Scene
 {
     public event GameAction PlayAganRequested;
     private Map map;
+    private Enemy enemy;
+    private Player player;
 
     public override void Draw(ScreenBuffer buffer)
     {
@@ -16,8 +18,13 @@ class PlayScene : Scene
     public override void Load()
     {
         map = new Map(this);
+        enemy = new Enemy(this, (14, 5));
+        player = new Player(this, (26, 5));
+
 
         AddGameObject(map);
+        AddGameObject(enemy);
+        AddGameObject(player);
     }
 
     public override void Unload()
@@ -27,6 +34,8 @@ class PlayScene : Scene
 
     public override void Update(float deltaTime)
     {
+        player.CheckMoveable(map.CheckWall(player.TempPosition));
 
+        UpdateGameObjects(deltaTime);
     }
 }
