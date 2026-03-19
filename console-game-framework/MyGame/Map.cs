@@ -43,7 +43,7 @@ class Map : GameObject
             {
                 if(Math.Abs(tile.Position.X - bomb.Position.X) <= info.power && Math.Abs(tile.Position.Y - bomb.Position.Y) == 0 || Math.Abs(tile.Position.X - bomb.Position.X) == 0 && Math.Abs(tile.Position.Y - bomb.Position.Y) <= info.power)
                 {
-                    tile.ColorUpdate(bomb.Color);
+                    tile.TileUpdate(bomb.Color);
                     bomb.Bombed += tile.OnBomebed;
                 }
             }

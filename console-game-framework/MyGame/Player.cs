@@ -21,6 +21,8 @@ class Player : GameObject
 
     public Player(Scene scene, (int x, int y) position) : base(scene)
     {
+        Name = "Player";
+
         _moveCoolTime = _moveInterval;
         Position = position;
         TempPosition = Position;

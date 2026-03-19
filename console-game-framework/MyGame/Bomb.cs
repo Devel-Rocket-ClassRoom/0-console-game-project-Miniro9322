@@ -15,6 +15,8 @@ class Bomb : GameObject
 
     public Bomb(Scene scene, (int, int)position) : base(scene)
     {
+        Name = "Bomb";
+
         _bombTimer = k_BombInterval;
         Position = position;
         Color = ConsoleColor.Green;

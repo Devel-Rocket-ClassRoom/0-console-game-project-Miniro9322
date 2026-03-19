@@ -10,6 +10,8 @@ class Enemy : GameObject
 
     public Enemy(Scene scene, (int, int) position) : base(scene)
     {
+        Name = "Enemy";
+
         Position = position;
     }
 
