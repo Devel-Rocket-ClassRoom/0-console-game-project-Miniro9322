@@ -6,18 +6,18 @@ using Framework.Engine;
 class SpeedUpItem : GameObject
 {
     private const char k_Body = '♬';
-    private (int X, int Y) _position;
+    public (int X, int Y) Position { get; private set; }
 
     public SpeedUpItem(Scene scene, (int, int) position) : base(scene)
     {
         Name = "SpeedUpItem";
 
-        _position = position;
+        Position = position;
     }
 
     public override void Draw(ScreenBuffer buffer)
     {
-        buffer.SetCell(_position.X, _position.Y, k_Body, ConsoleColor.Magenta);
+        buffer.SetCell(Position.X, Position.Y, k_Body, ConsoleColor.Magenta);
     }
 
     public override void Update(float deltaTime)

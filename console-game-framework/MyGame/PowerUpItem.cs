@@ -5,19 +5,19 @@ using Framework.Engine;
 
 class PowerUpItem : GameObject
 {
-    private (int X, int Y) _position;
     private const char k_Body = '★';
+    public (int X, int Y) Position { get; private set; }
 
     public PowerUpItem(Scene scene, (int, int) position) : base(scene)
     {
         Name = "PowerUpItem";
 
-        _position = position;
+        Position = position;
     }
 
     public override void Draw(ScreenBuffer buffer)
     {
-        buffer.SetCell(_position.X, _position.Y, k_Body, ConsoleColor.Cyan);
+        buffer.SetCell(Position.X, Position.Y, k_Body, ConsoleColor.Cyan);
     }
 
     public override void Update(float deltaTime)

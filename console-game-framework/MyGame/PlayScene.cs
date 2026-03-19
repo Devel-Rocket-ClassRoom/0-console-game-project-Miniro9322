@@ -36,6 +36,7 @@ class PlayScene : Scene
     public override void Update(float deltaTime)
     {
         player.CheckMoveable(map.CheckWall(player.TempPosition));
+        map.CheckItem(player);
 
         UpdateGameObjects(deltaTime);
     }

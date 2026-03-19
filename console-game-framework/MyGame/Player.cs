@@ -115,4 +115,22 @@ class Player : GameObject
             Move();
         }
     }
+
+    public void GetSpeedItem()
+    {
+        if(_moveInterval > 0.1f)
+        {
+            _moveInterval -= 0.05f;
+        }
+    }
+
+    public void GetPowerItem()
+    {
+        _power++;
+    }
+
+    public void GetBombItem()
+    {
+        _bombCount++;
+    }
 }

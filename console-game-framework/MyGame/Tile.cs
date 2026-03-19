@@ -14,9 +14,9 @@ class Tile : GameObject
 
     private ConsoleColor _color = ConsoleColor.Gray;
 
-    private SpeedUpItem _speedItem;
-    private PowerUpItem _powerItem;
-    private MoreBombItem _bombItem;
+    public SpeedUpItem SpeedItem { get; private set; }
+    public PowerUpItem PowerItem { get; private set; }
+    public MoreBombItem BombItem { get; private set; }
     private Random _random = new Random();
 
     public Tile(Scene scene, (int x, int y) position, char type) : base(scene)
@@ -59,7 +59,27 @@ class Tile : GameObject
         {
             _color = color;
         }
+    }
+
+    public void SpeedItemGetted()
+    {
+        base.Scene.RemoveGameObject(SpeedItem);
+        SpeedItem = null;
         
+    }
+
+    public void PowerItemGetted()
+    {
+        base.Scene.RemoveGameObject(PowerItem);
+        PowerItem = null;
+
+    }
+
+    public void BombItemGetted()
+    {
+        base.Scene.RemoveGameObject(BombItem);
+        BombItem = null;
+
     }
 
     public void OnBomebed(Bomb bomb)
@@ -76,16 +96,16 @@ class Tile : GameObject
                 switch (itemNum)
                 {
                     case 0:
-                        _speedItem = new SpeedUpItem(base.Scene, Position);
-                        base.Scene.AddGameObject(_speedItem);
+                        SpeedItem = new SpeedUpItem(base.Scene, Position);
+                        base.Scene.AddGameObject(SpeedItem);
                         break;
                     case 1:
-                        _powerItem = new PowerUpItem(base.Scene, Position);
-                        base.Scene.AddGameObject(_powerItem);
+                        PowerItem = new PowerUpItem(base.Scene, Position);
+                        base.Scene.AddGameObject(PowerItem);
                         break;
                     case 2:
-                        _bombItem = new MoreBombItem(base.Scene, Position);
-                        base.Scene.AddGameObject(_bombItem);
+                        BombItem = new MoreBombItem(base.Scene, Position);
+                        base.Scene.AddGameObject(BombItem);
                         break;
                 }
             }

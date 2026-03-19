@@ -62,6 +62,31 @@ class Map : GameObject
         return true;
     }
 
+    public void CheckItem(Player player)
+    {
+        foreach (var tile in _tiles)
+        {
+            if (tile.SpeedItem?.Position == player.Position)
+            {
+                player.GetSpeedItem();
+                tile.SpeedItemGetted();
+                break;
+            }
+            if (tile.PowerItem?.Position == player.Position)
+            {
+                player.GetPowerItem();
+                tile.PowerItemGetted();
+                break;
+            }
+            if (tile.BombItem?.Position == player.Position)
+            {
+                player.GetBombItem();
+                tile.BombItemGetted();
+                break;
+            }
+        }
+    }
+
     public override void Update(float deltaTime)
     {
 
