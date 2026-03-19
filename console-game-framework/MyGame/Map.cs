@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Framework.Engine;
 
-class Map : GameObject
+class Map : GameObject 
 {
     private List<Tile> _tiles;
 
@@ -37,17 +38,112 @@ class Map : GameObject
 
     public void BombSetted((List<Bomb> bombs, int power) info)
     {
-        foreach (var tile in _tiles)
+        foreach(var bomb in info.bombs)
         {
-            foreach(var bomb in info.bombs)
+            int index = 0;
+
+            var query = _tiles
+            .Where(n => n.Position == bomb.Position)
+            .Select(n => n).ToList();
+
+
+            foreach(var tile in query)
             {
-                if(Math.Abs(tile.Position.X - bomb.Position.X) <= info.power && Math.Abs(tile.Position.Y - bomb.Position.Y) == 0 || Math.Abs(tile.Position.X - bomb.Position.X) == 0 && Math.Abs(tile.Position.Y - bomb.Position.Y) <= info.power)
+                index = _tiles.IndexOf(tile);
+            }
+
+            _tiles[index].TileUpdate(bomb.Color);
+            bomb.Bombed += _tiles[index].OnBomebed;
+
+            for (int i = 1; i <= info.power; i++)
+            {
+                if(index - i < 0)
                 {
-                    tile.TileUpdate(bomb.Color);
-                    bomb.Bombed += tile.OnBomebed;
+                    break;
+                }
+
+                if(_tiles[index - i].Position.Y != _tiles[index].Position.Y)
+                {
+                    break;
+                }
+
+                _tiles[index - i].TileUpdate(bomb.Color);
+                bomb.Bombed += _tiles[index - i].OnBomebed;
+
+                if (_tiles[index - i].IsWall == true)
+                {
+                    break;
+                }
+            }
+
+            for (int i = 1; i <= info.power; i++)
+            {
+                if(index + i >= _tiles.Count)
+                {
+                    break;
+                }
+
+                if (_tiles[index + i].Position.Y != _tiles[index].Position.Y)
+                {
+                    break;
+                }
+
+                _tiles[index + i].TileUpdate(bomb.Color);
+                bomb.Bombed += _tiles[index + i].OnBomebed;
+
+                if (_tiles[index + i].IsWall == true)
+                {
+                    break;
+                }
+            }
+
+            for (int i = 1; i <= info.power; i++)
+            {
+                if(index - 13 * i < 0)
+                {
+                    break;
+                }
+
+                _tiles[index - 13 * i].TileUpdate(bomb.Color);
+                bomb.Bombed += _tiles[index - 13 * i].OnBomebed;
+                if (_tiles[index - 13 * i].IsWall == true)
+                {
+                    break;
+                }
+            }
+
+            for (int i = 1; i <= info.power; i++)
+            {
+                if (index + 13 * i >= _tiles.Count)
+                {
+                    break;
+                }
+
+                _tiles[index + 13*i].TileUpdate(bomb.Color);
+                bomb.Bombed += _tiles[index + 13 * i].OnBomebed;
+                if (_tiles[index + 13 * i].IsWall == true)
+                {
+                    break;
                 }
             }
         }
+
+
+        //foreach (var tile in _tiles)
+        //{
+        //    foreach (var bomb in info.bombs)
+        //    {
+        //        if (Math.Abs(tile.Position.X - bomb.Position.X) <= info.power && Math.Abs(tile.Position.Y - bomb.Position.Y) == 0 || Math.Abs(tile.Position.X - bomb.Position.X) == 0 && Math.Abs(tile.Position.Y - bomb.Position.Y) <= info.power)
+        //        {
+        //            tile.TileUpdate(bomb.Color);
+        //            if (tile.IsWall == true)
+        //            {
+
+        //            }
+        //            bomb.Bombed += tile.OnBomebed;
+        //        }
+        //    }
+        //}
     }
 
     public bool CheckWall((int X, int Y) position)
