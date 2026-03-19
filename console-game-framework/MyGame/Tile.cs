@@ -10,11 +10,13 @@ class Tile : GameObject
 
     public (int X, int Y) Position { get; private set; }
 
-    public char TileType { get; private set; }
+    private char _tile;
+
+    private ConsoleColor _color = ConsoleColor.Gray;
 
     public Tile(Scene scene, (int x, int y) position, char type) : base(scene)
     {
-        TileType = type;
+        _tile = type;
         Position = position;
 
         switch (type)
@@ -41,6 +43,24 @@ class Tile : GameObject
 
     public override void Draw(ScreenBuffer buffer)
     {
-        buffer.SetCell(Position.X, Position.Y, TileType);
+        buffer.SetCell(Position.X, Position.Y, _tile, _color);
+    }
+
+    public void ColorUpdate(ConsoleColor color)
+    {
+        if(IsWall == false)
+        {
+            _color = color;
+        }
+    }
+
+    public void OnBomebed(Bomb bomb)
+    {
+        _color = ConsoleColor.Gray;
+        if(_isDestroyable == true)
+        {
+            _tile = '□';
+            IsWall = false;
+        }
     }
 }

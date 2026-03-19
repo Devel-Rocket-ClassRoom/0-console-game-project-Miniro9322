@@ -35,6 +35,21 @@ class Map : GameObject
         }
     }
 
+    public void BombSetted((List<Bomb> bombs, int power) info)
+    {
+        foreach (var tile in _tiles)
+        {
+            foreach(var bomb in info.bombs)
+            {
+                if(Math.Abs(tile.Position.X - bomb.Position.X) <= info.power && Math.Abs(tile.Position.Y - bomb.Position.Y) == 0 || Math.Abs(tile.Position.X - bomb.Position.X) == 0 && Math.Abs(tile.Position.Y - bomb.Position.Y) <= info.power)
+                {
+                    tile.ColorUpdate(bomb.Color);
+                    bomb.Bombed += tile.OnBomebed;
+                }
+            }
+        }
+    }
+
     public bool CheckWall((int X, int Y) position)
     {
         foreach( var tile in _tiles)

@@ -9,12 +9,15 @@ class Player : GameObject
     private float _moveCoolTime;
     private const char k_body = '●';
     private bool _canMove;
-    private Bomb _bomb;
     private bool _isDead = false;
-    private int _power;
+    private int _power = 1;
+    private int _bombCount = 1;
 
     public (int X,  int Y) Position { get; private set; }
     public (int X, int Y) TempPosition { get; private set; }
+    public List<Bomb> Bombs { get; private set; } = new List<Bomb>();
+
+    public event GameAction<(List<Bomb>, int)> BombSetted;
 
     public Player(Scene scene, (int x, int y) position) : base(scene)
     {
@@ -22,12 +25,11 @@ class Player : GameObject
         Position = position;
         TempPosition = Position;
         _canMove = false;
-        _power = 1;
     }
 
     public override void Draw(ScreenBuffer buffer)
     {
-        buffer.SetCell(Position.X, Position.Y, k_body, ConsoleColor.Green);
+        buffer.SetCell(Position.X, Position.Y, k_body, ConsoleColor.Blue);
     }
 
     private void Move()
@@ -54,9 +56,17 @@ class Player : GameObject
     {
         if (Input.IsKeyDown(ConsoleKey.Z))
         {
-            _bomb = new Bomb(base.Scene, Position);
-            base.Scene.AddGameObject(_bomb);
-            _bomb.Bombed += IsDead;
+            if(_bombCount > 0)
+            {
+                Bombs.Add(new Bomb(base.Scene, Position));
+                foreach (var bomb in Bombs)
+                {
+                    base.Scene.AddGameObject(bomb);
+                    bomb.Bombed += IsDead;
+                }
+
+                _bombCount--;
+            }
         }
     }
 
@@ -69,19 +79,29 @@ class Player : GameObject
         }
     }
 
-    public void IsDead((int X, int Y)position)
+    public void IsDead(Bomb bomb)
     {
-        if(Position.X <= position.X + _power || Position.X >= position.X - _power && Position.Y <= position.Y + _power || Position.Y >= position.Y - _power)
+        if(Math.Abs(Position.X - bomb.Position.X) <= _power && Math.Abs(Position.Y - bomb.Position.Y) == 0 || Math.Abs(Position.X - bomb.Position.X) == 0 && Math.Abs(Position.Y - bomb.Position.Y) <= _power)
         {
             _isDead = true;
         }
-        base.Scene.RemoveGameObject(_bomb);
-        _bomb = null;
+        base.Scene.RemoveGameObject(bomb);
+        Bombs.Remove(bomb);
+        _bombCount++;
     }
 
     public override void Update(float deltaTime)
     {
-        if(_canMove == true)
+        if(_isDead == true)
+        {
+            return;
+        }
+
+        SetBomb();
+
+        BombSetted?.Invoke((Bombs, _power));
+
+        if (_canMove == true)
         {
             Position = TempPosition;
             _moveCoolTime = _moveInterval;
@@ -92,7 +112,5 @@ class Player : GameObject
         {
             Move();
         }
-
-        SetBomb();
     }
 }
