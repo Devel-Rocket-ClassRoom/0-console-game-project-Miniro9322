@@ -21,7 +21,6 @@ class PlayScene : Scene
         enemy = new Enemy(this, (14, 5));
         player = new Player(this, (26, 5));
 
-
         AddGameObject(map);
         AddGameObject(enemy);
         AddGameObject(player);

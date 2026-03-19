@@ -9,10 +9,12 @@ class Player : GameObject
     private float _moveCoolTime;
     private const char k_body = '●';
     private bool _canMove;
+    private Bomb _bomb;
+    private bool _isDead = false;
+    private int _power;
 
     public (int X,  int Y) Position { get; private set; }
     public (int X, int Y) TempPosition { get; private set; }
-
 
     public Player(Scene scene, (int x, int y) position) : base(scene)
     {
@@ -20,6 +22,7 @@ class Player : GameObject
         Position = position;
         TempPosition = Position;
         _canMove = false;
+        _power = 1;
     }
 
     public override void Draw(ScreenBuffer buffer)
@@ -47,6 +50,16 @@ class Player : GameObject
         }
     }
 
+    private void SetBomb()
+    {
+        if (Input.IsKeyDown(ConsoleKey.Z))
+        {
+            _bomb = new Bomb(base.Scene, Position);
+            base.Scene.AddGameObject(_bomb);
+            _bomb.Bombed += IsDead;
+        }
+    }
+
     public void CheckMoveable(bool isWall)
     {
         _canMove = !isWall;
@@ -54,6 +67,16 @@ class Player : GameObject
         {
             _canMove = false;
         }
+    }
+
+    public void IsDead((int X, int Y)position)
+    {
+        if(Position.X <= position.X + _power || Position.X >= position.X - _power && Position.Y <= position.Y + _power || Position.Y >= position.Y - _power)
+        {
+            _isDead = true;
+        }
+        base.Scene.RemoveGameObject(_bomb);
+        _bomb = null;
     }
 
     public override void Update(float deltaTime)
@@ -69,5 +92,7 @@ class Player : GameObject
         {
             Move();
         }
+
+        SetBomb();
     }
 }
