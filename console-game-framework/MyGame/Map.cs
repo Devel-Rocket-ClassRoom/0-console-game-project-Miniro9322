@@ -127,23 +127,6 @@ class Map : GameObject
                 }
             }
         }
-
-
-        //foreach (var tile in _tiles)
-        //{
-        //    foreach (var bomb in info.bombs)
-        //    {
-        //        if (Math.Abs(tile.Position.X - bomb.Position.X) <= info.power && Math.Abs(tile.Position.Y - bomb.Position.Y) == 0 || Math.Abs(tile.Position.X - bomb.Position.X) == 0 && Math.Abs(tile.Position.Y - bomb.Position.Y) <= info.power)
-        //        {
-        //            tile.TileUpdate(bomb.Color);
-        //            if (tile.IsWall == true)
-        //            {
-
-        //            }
-        //            bomb.Bombed += tile.OnBomebed;
-        //        }
-        //    }
-        //}
     }
 
     public bool CheckWall((int X, int Y) position)
