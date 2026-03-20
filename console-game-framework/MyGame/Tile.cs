@@ -1,17 +1,21 @@
-﻿using System;
+﻿using Framework.Engine;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
-using Framework.Engine;
 
 class Tile : GameObject
 {
-    private bool _isDestroyable;
+    public bool IsDestroyable { get; private set; }
     public bool IsWall { get; private set; }
 
     public (int X, int Y) Position { get; private set; }
 
     private char _tile;
     private char _originalTile;
+
+    private const float k_BombInterval = 2.0f;
+    private float _bombTimer;
 
     private ConsoleColor _color = ConsoleColor.Gray;
 
@@ -30,26 +34,28 @@ class Tile : GameObject
         _originalTile = _tile;
         Position = position;
 
+        _bombTimer = k_BombInterval;
+
         switch (type)
         {
             case ' ':
                 IsWall = false;
-                _isDestroyable = false;
+                IsDestroyable = false;
                 break;
-            case '■':
+            case '█':
                 IsWall = true;
-                _isDestroyable = false;
+                IsDestroyable = false;
                 break;
-            case '▨':
+            case '░':
                 IsWall = true;
-                _isDestroyable = true;
+                IsDestroyable = true;
                 break;
         }
     }
 
     public override void Update(float deltaTime)
     {
-        
+
     }
 
     public override void Draw(ScreenBuffer buffer)
@@ -57,15 +63,12 @@ class Tile : GameObject
         buffer.SetCell(Position.X, Position.Y, _tile, _color);
     }
 
-    public void TileUpdate(ConsoleColor color)
+    public void TileUpdate()
     {
         if(_tile == ' ')
         {
             _tile = '□';
-        }
-        if (IsWall == false)
-        {
-            _color = color;
+            _color = ConsoleColor.Red;
         }
         IsWarning = true;
     }
@@ -95,7 +98,7 @@ class Tile : GameObject
     {
         _color = ConsoleColor.Gray;
         IsWarning = false;
-        if (_isDestroyable == true)
+        if (IsDestroyable == true)
         {
             _tile = ' ';
             _originalTile = _tile;
@@ -121,7 +124,7 @@ class Tile : GameObject
                 }
             }
             IsWall = false;
-            _isDestroyable = false;
+            IsDestroyable = false;
         }
         else
         {

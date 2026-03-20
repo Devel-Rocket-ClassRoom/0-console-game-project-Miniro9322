@@ -58,7 +58,7 @@ class Player : GameObject
 
     private void SetBomb()
     {
-        if (Input.IsKey(ConsoleKey.Z))
+        if (Input.IsKeyDown(ConsoleKey.Z))
         {
             if(_bombCount > 0)
             {
@@ -76,12 +76,14 @@ class Player : GameObject
 
                 _bombPosition = bomb.Position;
 
+                BombSetted?.Invoke((Bombs, _power));
+
                 _bombCount--;
             }
         }
     }
 
-    public void CheckWaringin(bool warning)
+    public void CheckWarning(bool warning)
     {
         _isWarning = warning;
     }
@@ -130,8 +132,6 @@ class Player : GameObject
         }
 
         SetBomb();
-
-        BombSetted?.Invoke((Bombs, _power));
 
         if (_canMove == true)
         {

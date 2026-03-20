@@ -6,9 +6,10 @@ using Framework.Engine;
 class Bomb : GameObject
 {
     private const char k_body = '※';
-    public (int X, int Y) Position { get; private set; }
     private const float k_BombInterval = 2.0f;
     private float _bombTimer;
+    
+    public (int X, int Y) Position { get; private set; }
     public ConsoleColor Color { get; private set; }
 
     public event GameAction<Bomb> Bombed;

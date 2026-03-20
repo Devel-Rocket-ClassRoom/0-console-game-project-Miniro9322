@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Framework.Engine;
 
@@ -9,13 +10,14 @@ class Enemy : GameObject
     private float _moveCoolTime;
     private const char k_body = '●';
     private bool _canMove;
-    public bool IsDead { get; private set; } = false;
     private int _power = 1;
     private int _bombCount = 1;
     private Random _random = new Random();
     private bool _isWarning;
     private (int X, int Y) _bombPosition;
-
+    private int _direction;
+    
+    public bool IsDead { get; private set; } = false;
     public (int X, int Y) Position { get; private set; }
     public (int X, int Y) TempPosition { get; private set; }
     public List<Bomb> Bombs { get; private set; } = new List<Bomb>();
@@ -28,7 +30,6 @@ class Enemy : GameObject
 
         _moveCoolTime = _moveInterval;
         Position = position;
-        TempPosition = Position;
         _canMove = false;
     }
 
@@ -39,22 +40,25 @@ class Enemy : GameObject
 
     private void Move()
     {
-        int direction = _random.Next(4);
-
-        switch (direction)
+        if(_canMove == false)
         {
-            case 0:
-                TempPosition = (Position.X - 1, Position.Y);
-                break;
-            case 1:
-                TempPosition = (Position.X, Position.Y - 1);
-                break;
-            case 2:
-                TempPosition = (Position.X + 1, Position.Y);
-                break;
-            case 3:
-                TempPosition = (Position.X, Position.Y + 1);
-                break;
+            _direction = _random.Next(4);
+
+            switch (_direction)
+            {
+                case 0:
+                    TempPosition = (Position.X - 1, Position.Y);
+                    break;
+                case 1:
+                    TempPosition = (Position.X, Position.Y - 1);
+                    break;
+                case 2:
+                    TempPosition = (Position.X + 1, Position.Y);
+                    break;
+                case 3:
+                    TempPosition = (Position.X, Position.Y + 1);
+                    break;
+            }
         }
     }
 
@@ -79,6 +83,7 @@ class Enemy : GameObject
             _bombCount--;
         }
     }
+
     private void IsBombed(Bomb bomb)
     {
         if (Position.X >= bomb.Position.X - _power && Position.X <= bomb.Position.X + _power && Position.Y == bomb.Position.Y || Position.Y >= bomb.Position.Y - _power && Position.Y >= bomb.Position.Y + _power && Position.X == bomb.Position.X)
@@ -94,7 +99,7 @@ class Enemy : GameObject
         }
     }
 
-    public void CheckWaringin(bool warning)
+    public void CheckWarning(bool warning)
     {
         _isWarning = warning;
     }
@@ -102,6 +107,7 @@ class Enemy : GameObject
     public void CheckMoveable(bool isWall)
     {
         _canMove = !isWall;
+
         if (Position == TempPosition)
         {
             _canMove = false;
@@ -129,12 +135,12 @@ class Enemy : GameObject
             return;
         }
 
-
         BombSetted?.Invoke((Bombs, _power));
 
         if (_canMove == true)
         {
             Position = TempPosition;
+            TempPosition = default;
             _moveCoolTime = _moveInterval;
         }
 
@@ -143,6 +149,7 @@ class Enemy : GameObject
         {
             SetBomb();
             Move();
+            _moveCoolTime = _moveInterval;
         }
     }
 
@@ -162,5 +169,10 @@ class Enemy : GameObject
     public void GetBombItem()
     {
         _bombCount++;
+    }
+
+    public void ChasePlayer((int X, int Y)position)
+    {
+
     }
 }

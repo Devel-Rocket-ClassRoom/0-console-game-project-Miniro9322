@@ -46,4 +46,9 @@ class BomberMan : GameApp
         play.PlayAgainRequested += ChangeToTitle;
         _scenes.ChangeScene(play);
     }
+
+    private void ChangeToSelectModeScene()
+    {
+
+    }
 }
