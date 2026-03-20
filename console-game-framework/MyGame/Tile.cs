@@ -40,7 +40,7 @@ class Tile : GameObject
                 IsWall = true;
                 _isDestroyable = false;
                 break;
-            case '▣':
+            case '▨':
                 IsWall = true;
                 _isDestroyable = true;
                 break;
