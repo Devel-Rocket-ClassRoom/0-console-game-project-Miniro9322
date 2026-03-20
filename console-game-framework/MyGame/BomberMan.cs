@@ -42,7 +42,7 @@ class BomberMan : GameApp
     private void ChangeToPlay()
     {
         var play = new PlayScene();
-        play.PlayAganRequested += ChangeToTitle;
+        play.PlayAgainRequested += ChangeToTitle;
         _scenes.ChangeScene(play);
     }
 }

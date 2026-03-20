@@ -5,14 +5,24 @@ using Framework.Engine;
 
 class PlayScene : Scene
 {
-    public event GameAction PlayAganRequested;
+    public event GameAction PlayAgainRequested;
     private Map map;
     private Enemy enemy;
     private Player player;
+    private bool _isGameOver;
+    private string _gameResult;
 
     public override void Draw(ScreenBuffer buffer)
     {
         DrawGameObjects(buffer);
+
+        if(_isGameOver == true)
+        {
+            RemoveGameObject(map);
+            buffer.WriteTextCentered(8, "GAME OVER", ConsoleColor.Red);
+            buffer.WriteTextCentered(10, $"{_gameResult}", ConsoleColor.Yellow);
+            buffer.WriteTextCentered(12, "Press ENTER to Retry", ConsoleColor.White);
+        }
     }
 
     public override void Load()
@@ -36,6 +46,29 @@ class PlayScene : Scene
 
     public override void Update(float deltaTime)
     {
+        if (_isGameOver)
+        {
+            if (Input.IsKeyDown(ConsoleKey.Enter))
+            {
+                PlayAgainRequested?.Invoke();
+            }
+            return;
+        }
+
+        if (enemy.IsDead == true)
+        {
+            _isGameOver = true;
+            _gameResult = "You Win!";
+            return;
+        }
+
+        if (player.IsDead == true)
+        {
+            _isGameOver = true;
+            _gameResult = "You Lose...";
+            return;
+        }
+
         player.CheckMoveable(map.CheckWall(player.TempPosition));
         enemy.CheckMoveable(map.CheckWall(enemy.TempPosition));
         player.CheckWaringin(map.OnWarning(player.Position));

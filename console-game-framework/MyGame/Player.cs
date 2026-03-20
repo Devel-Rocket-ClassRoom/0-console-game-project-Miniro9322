@@ -9,10 +9,11 @@ class Player : GameObject
     private float _moveCoolTime;
     private const char k_body = '●';
     private bool _canMove;
-    private bool _isDead = false;
+    public bool IsDead { get; private set; } = false;
     private int _power = 1;
     private int _bombCount = 1;
     private bool _isWarning;
+    private (int X, int Y) _bombPosition;
 
     public (int X,  int Y) Position { get; private set; }
     public (int X, int Y) TempPosition { get; private set; }
@@ -66,7 +67,9 @@ class Player : GameObject
 
                 base.Scene.AddGameObject(bomb);
                 bomb.Bombed += DeleteBomb;
-                bomb.Bombed += IsDead;
+                bomb.Bombed += IsBombed;
+
+                _bombPosition = bomb.Position;
 
                 _bombCount--;
             }
@@ -78,18 +81,18 @@ class Player : GameObject
         _isWarning = warning;
     }
 
-    private void IsDead(Bomb bomb)
+    private void IsBombed(Bomb bomb)
     {
         if (Position.X >= bomb.Position.X - _power && Position.X <= bomb.Position.X + _power && Position.Y == bomb.Position.Y || Position.Y >= bomb.Position.Y - _power && Position.Y <= bomb.Position.Y + _power && Position.X == bomb.Position.X)
         {
             if(_isWarning == true)
             {
-                _isDead = true;
+                IsDead = true;
             }
         }
         else
         {
-            _isDead = false;
+            IsDead = false;
         }
     }
 
@@ -100,10 +103,15 @@ class Player : GameObject
         {
             _canMove = false;
         }
+        if(_bombPosition == TempPosition)
+        {
+            _canMove = false;
+        }
     }
 
     public void DeleteBomb(Bomb bomb)
     {
+        _bombPosition = default;
         base.Scene.RemoveGameObject(bomb);
         Bombs.Remove(bomb);
         _bombCount++;
@@ -111,7 +119,7 @@ class Player : GameObject
 
     public override void Update(float deltaTime)
     {
-        if(_isDead == true)
+        if(IsDead == true)
         {
             return;
         }
