@@ -64,6 +64,11 @@ class Enemy : GameObject
         {
             var bomb = new Bomb(base.Scene, Position);
 
+            if (bomb.Position == _bombPosition)
+            {
+                return;
+            }
+
             Bombs.Add(bomb);
             base.Scene.AddGameObject(bomb);
             bomb.Bombed += DeleteBomb;

@@ -36,6 +36,7 @@ class BomberMan : GameApp
     {
         var title = new TitleScene();
         title.StartRequested += ChangeToPlay;
+        Console.Clear();
         _scenes.ChangeScene(title);
     }
 

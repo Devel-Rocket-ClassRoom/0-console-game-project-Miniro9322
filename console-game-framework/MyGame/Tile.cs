@@ -11,6 +11,7 @@ class Tile : GameObject
     public (int X, int Y) Position { get; private set; }
 
     private char _tile;
+    private char _originalTile;
 
     private ConsoleColor _color = ConsoleColor.Gray;
 
@@ -26,11 +27,12 @@ class Tile : GameObject
         Name = "Tile";
 
         _tile = type;
+        _originalTile = _tile;
         Position = position;
 
         switch (type)
         {
-            case '□':
+            case ' ':
                 IsWall = false;
                 _isDestroyable = false;
                 break;
@@ -57,7 +59,11 @@ class Tile : GameObject
 
     public void TileUpdate(ConsoleColor color)
     {
-        if(IsWall == false)
+        if(_tile == ' ')
+        {
+            _tile = '□';
+        }
+        if (IsWall == false)
         {
             _color = color;
         }
@@ -91,8 +97,9 @@ class Tile : GameObject
         IsWarning = false;
         if (_isDestroyable == true)
         {
+            _tile = ' ';
+            _originalTile = _tile;
             int itemPercent = _random.Next(10);
-            _tile = '□';
             if(itemPercent < 3)
             {
                 int itemNum = _random.Next(3);
@@ -115,6 +122,11 @@ class Tile : GameObject
             }
             IsWall = false;
             _isDestroyable = false;
+        }
+        else
+        {
+            _tile = _originalTile;
+
         }
     }
 }

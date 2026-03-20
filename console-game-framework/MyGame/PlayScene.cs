@@ -16,7 +16,10 @@ class PlayScene : Scene
     {
         DrawGameObjects(buffer);
 
-        if(_isGameOver == true)
+        buffer.WriteText(1, 0, $"★ : 폭탄 범위 증가 ♬ : 이동 속도 증가 ◈ : 폭탄 설치 가능 개수 증가", ConsoleColor.Cyan);
+        buffer.WriteText(1, 19, "Arrow Keys: Move Z: SetBomb", ConsoleColor.DarkGray);
+
+        if (_isGameOver == true)
         {
             RemoveGameObject(map);
             buffer.WriteTextCentered(8, "GAME OVER", ConsoleColor.Red);

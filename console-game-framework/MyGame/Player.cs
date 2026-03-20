@@ -58,10 +58,15 @@ class Player : GameObject
 
     private void SetBomb()
     {
-        if (Input.IsKeyDown(ConsoleKey.Z))
+        if (Input.IsKey(ConsoleKey.Z))
         {
             if(_bombCount > 0)
             {
+                if(_bombPosition == Position)
+                {
+                    return;
+                }
+
                 var bomb = new Bomb(base.Scene, Position);
                 Bombs.Add(bomb);
 
