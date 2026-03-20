@@ -12,6 +12,7 @@ class Player : GameObject
     private bool _isDead = false;
     private int _power = 1;
     private int _bombCount = 1;
+    private bool _isWarning;
 
     public (int X,  int Y) Position { get; private set; }
     public (int X, int Y) TempPosition { get; private set; }
@@ -64,10 +65,31 @@ class Player : GameObject
                 Bombs.Add(bomb);
 
                 base.Scene.AddGameObject(bomb);
+                bomb.Bombed += DeleteBomb;
                 bomb.Bombed += IsDead;
 
                 _bombCount--;
             }
+        }
+    }
+
+    public void CheckWaringin(bool warning)
+    {
+        _isWarning = warning;
+    }
+
+    private void IsDead(Bomb bomb)
+    {
+        if (Position.X >= bomb.Position.X - _power && Position.X <= bomb.Position.X + _power && Position.Y == bomb.Position.Y || Position.Y >= bomb.Position.Y - _power && Position.Y <= bomb.Position.Y + _power && Position.X == bomb.Position.X)
+        {
+            if(_isWarning == true)
+            {
+                _isDead = true;
+            }
+        }
+        else
+        {
+            _isDead = false;
         }
     }
 
@@ -80,7 +102,7 @@ class Player : GameObject
         }
     }
 
-    public void IsDead(Bomb bomb)
+    public void DeleteBomb(Bomb bomb)
     {
         base.Scene.RemoveGameObject(bomb);
         Bombs.Remove(bomb);

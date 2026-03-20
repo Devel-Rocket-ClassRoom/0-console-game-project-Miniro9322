@@ -36,6 +36,18 @@ class Map : GameObject
         }
     }
 
+    public bool OnWarning((int, int) position)
+    {
+        foreach (var tile in _tiles)
+        {
+            if (tile.Position == position)
+            {
+                return tile.IsWarning;
+            }
+        }
+        return false;
+    }
+
     public void BombSetted((List<Bomb> bombs, int power) info)
     {
         foreach(var bomb in info.bombs)

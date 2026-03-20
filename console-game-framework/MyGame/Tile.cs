@@ -18,6 +18,8 @@ class Tile : GameObject
     public PowerUpItem PowerItem { get; private set; }
     public MoreBombItem BombItem { get; private set; }
     private Random _random = new Random();
+    public bool IsWarning { get; private set; } = false;
+
 
     public Tile(Scene scene, (int x, int y) position, char type) : base(scene)
     {
@@ -59,6 +61,7 @@ class Tile : GameObject
         {
             _color = color;
         }
+        IsWarning = true;
     }
 
     public void SpeedItemGetted()
@@ -85,7 +88,8 @@ class Tile : GameObject
     public void OnBomebed(Bomb bomb)
     {
         _color = ConsoleColor.Gray;
-        if(_isDestroyable == true)
+        IsWarning = false;
+        if (_isDestroyable == true)
         {
             int itemPercent = _random.Next(10);
             _tile = '□';

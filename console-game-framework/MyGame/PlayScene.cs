@@ -38,6 +38,8 @@ class PlayScene : Scene
     {
         player.CheckMoveable(map.CheckWall(player.TempPosition));
         enemy.CheckMoveable(map.CheckWall(enemy.TempPosition));
+        player.CheckWaringin(map.OnWarning(player.Position));
+        enemy.CheckWaringin(map.OnWarning(enemy.Position));
         map.CheckItem(player);
         map.CheckItem(enemy);
 
