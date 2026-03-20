@@ -166,6 +166,31 @@ class Map : GameObject
         }
     }
 
+    public void CheckItem(Enemy enemy)
+    {
+        foreach (var tile in _tiles)
+        {
+            if (tile.SpeedItem?.Position == enemy.Position)
+            {
+                enemy.GetSpeedItem();
+                tile.SpeedItemGetted();
+                break;
+            }
+            if (tile.PowerItem?.Position == enemy.Position)
+            {
+                enemy.GetPowerItem();
+                tile.PowerItemGetted();
+                break;
+            }
+            if (tile.BombItem?.Position == enemy.Position)
+            {
+                enemy.GetBombItem();
+                tile.BombItemGetted();
+                break;
+            }
+        }
+    }
+
     public override void Update(float deltaTime)
     {
 

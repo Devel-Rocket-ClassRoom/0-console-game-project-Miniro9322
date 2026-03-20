@@ -22,6 +22,7 @@ class PlayScene : Scene
         player = new Player(this, (26, 5));
 
         player.BombSetted += map.BombSetted;
+        enemy.BombSetted += map.BombSetted;
 
         AddGameObject(map);
         AddGameObject(enemy);
@@ -36,7 +37,10 @@ class PlayScene : Scene
     public override void Update(float deltaTime)
     {
         player.CheckMoveable(map.CheckWall(player.TempPosition));
+        enemy.CheckMoveable(map.CheckWall(enemy.TempPosition));
         map.CheckItem(player);
+        map.CheckItem(enemy);
+
 
         UpdateGameObjects(deltaTime);
     }

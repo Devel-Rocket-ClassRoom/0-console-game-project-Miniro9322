@@ -60,12 +60,11 @@ class Player : GameObject
         {
             if(_bombCount > 0)
             {
-                Bombs.Add(new Bomb(base.Scene, Position));
-                foreach (var bomb in Bombs)
-                {
-                    base.Scene.AddGameObject(bomb);
-                    bomb.Bombed += IsDead;
-                }
+                var bomb = new Bomb(base.Scene, Position);
+                Bombs.Add(bomb);
+
+                base.Scene.AddGameObject(bomb);
+                bomb.Bombed += IsDead;
 
                 _bombCount--;
             }
@@ -83,10 +82,6 @@ class Player : GameObject
 
     public void IsDead(Bomb bomb)
     {
-        if(Math.Abs(Position.X - bomb.Position.X) <= _power && Math.Abs(Position.Y - bomb.Position.Y) == 0 || Math.Abs(Position.X - bomb.Position.X) == 0 && Math.Abs(Position.Y - bomb.Position.Y) <= _power)
-        {
-            _isDead = true;
-        }
         base.Scene.RemoveGameObject(bomb);
         Bombs.Remove(bomb);
         _bombCount++;
