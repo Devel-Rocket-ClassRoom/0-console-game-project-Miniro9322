@@ -101,6 +101,7 @@ class Tile : GameObject
     {
         _color = ConsoleColor.Gray;
         IsWarning = false;
+        IsBomb = false;
         if (IsDestroyable == true)
         {
             _tile = ' ';
@@ -128,7 +129,6 @@ class Tile : GameObject
             }
             IsWall = false;
             IsDestroyable = false;
-            IsBomb = false;
         }
         else
         {

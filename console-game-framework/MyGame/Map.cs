@@ -61,6 +61,7 @@ class Map : GameObject
 
 
         Tiles[index].TileUpdate();
+        Tiles[index].Bombset();
         info.bomb.Bombed += Tiles[index].OnBomebed;
 
         for (int i = 1; i <= info.power; i++)

@@ -19,7 +19,7 @@ class Enemy : GameObject
     public (int X, int Y) Position { get; private set; }
     public (int X, int Y) TempPosition { get; private set; }
     public List<Bomb> Bombs { get; private set; } = new List<Bomb>();
-    public int Power { get; private set; }
+    public int Power { get; private set; } = 1;
 
 
     public event GameAction<(Bomb, int)> BombSetted;
