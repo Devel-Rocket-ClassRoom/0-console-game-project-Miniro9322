@@ -18,7 +18,9 @@ class PlayScene2 : Scene
         DrawGameObjects(buffer);
 
         buffer.WriteText(1, 0, $"★ : 폭탄 범위 증가 ♬ : 이동 속도 증가 ◈ : 폭탄 개수 증가", ConsoleColor.Cyan);
-        buffer.WriteText(1, 19, "Arrow Keys: Move Z: SetBomb", ConsoleColor.DarkGray);
+        buffer.WriteText(1, 1, $"█ : 벽 ░ : 상자", ConsoleColor.Cyan);
+        buffer.WriteText(1, 18, "1P Arrows Keys: Move NumPad 0: Bomb", ConsoleColor.DarkGray);
+        buffer.WriteText(1, 19, "2P WASD: Move Spaceber: Bomb", ConsoleColor.DarkGray);
 
         if (_isGameOver == true)
         {

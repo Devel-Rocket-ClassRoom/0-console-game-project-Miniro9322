@@ -22,8 +22,8 @@ class TitleScene : Scene
     public override void Draw(ScreenBuffer buffer)
     {
         buffer.WriteTextCentered(4, "BomberMan", ConsoleColor.Yellow);
-        buffer.WriteTextCentered(8, "Arrows Keys: Move");
-        buffer.WriteTextCentered(10, "Z: Bomb");
+        buffer.WriteTextCentered(8, "1P Arrows Keys: Move NumPad 0: Bomb");
+        buffer.WriteTextCentered(10, "2P WASD: Move Spaceber: Bomb");
         buffer.WriteTextCentered(12, "ESC: Quit");
         buffer.WriteTextCentered(15, "Press ENTER to Select Mode", ConsoleColor.Green);
     }

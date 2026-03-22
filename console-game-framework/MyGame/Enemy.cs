@@ -169,9 +169,4 @@ class Enemy : GameObject
     {
         _bombCount++;
     }
-
-    public void ChasePlayer((int X, int Y)position)
-    {
-
-    }
 }
