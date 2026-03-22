@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Framework.Engine;
 
-class PlayScene : Scene
+class PlayScene2 : Scene
 {
     public event GameAction PlayAgainRequested;
     private Map map;
-    private Enemy enemy;
+    private Player2 player2;
     private Player player;
     private bool _isGameOver;
     private string _gameResult;
@@ -30,17 +32,17 @@ class PlayScene : Scene
     public override void Load()
     {
         map = new Map(this);
-        enemy = new Enemy(this, (14, 5));
+        player2 = new Player2(this, (14, 5));
         player = new Player(this, (26, 5));
 
         player.BombSetted += map.BombSetted;
-        enemy.BombSetted += map.BombSetted;
-        player.EnemyBombRequest += enemy.EnemyBombSetted;
-        enemy.EnemyBombRequest += player.EnemyBombSetted;
+        player2.BombSetted += map.BombSetted;
+        player.EnemyBombRequest += player2.EnemyBombSetted;
+        player2.EnemyBombRequest += player.EnemyBombSetted;
 
 
         AddGameObject(map);
-        AddGameObject(enemy);
+        AddGameObject(player2);
         AddGameObject(player);
     }
 
@@ -60,42 +62,26 @@ class PlayScene : Scene
             return;
         }
 
-        if (enemy.IsDead == true)
+        if (player2.IsDead == true)
         {
             _isGameOver = true;
-            _gameResult = "You Win!";
+            _gameResult = "1P Win!";
             return;
         }
 
         if (player.IsDead == true)
         {
             _isGameOver = true;
-            _gameResult = "You Lose...";
+            _gameResult = "2P Win!";
             return;
         }
 
-        if(enemy.Path == null)
-        {
-            enemy.PathRequest(map.ChasePlayer(enemy.Position, player.Position));
-        }
-
-        if (map.OnWarning(enemy.Position) == true)
-        {
-            enemy.PathRequest(map.FindSafe(enemy.Position));
-        }
-
         player.CheckMoveable(map.CheckWall(player.TempPosition));
-        enemy.CheckMoveable(map.CheckWall(enemy.TempPosition));
-
-        if(player.Position.Y == enemy.Position.Y && player.Position.X >= enemy.Position.X - enemy.Power && player.Position.X <= enemy.Position.X + enemy.Power || player.Position.X == enemy.Position.X && player.Position.Y >= enemy.Position.Y - enemy.Power && player.Position.Y <= enemy.Position.Y + enemy.Power)
-        {
-            enemy.SetBomb();
-        }
-
+        player2.CheckMoveable(map.CheckWall(player2.TempPosition));
         player.CheckWarning(map.OnWarning(player.Position));
-        enemy.CheckWarning(map.OnWarning(enemy.Position));
+        player2.CheckWarning(map.OnWarning(player2.Position));
         map.CheckItem(player);
-        map.CheckItem(enemy);
+        map.CheckItem(player2);
 
         UpdateGameObjects(deltaTime);
 

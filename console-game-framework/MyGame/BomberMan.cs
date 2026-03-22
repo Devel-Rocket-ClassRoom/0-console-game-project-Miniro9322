@@ -35,7 +35,7 @@ class BomberMan : GameApp
     private void ChangeToTitle()
     {
         var title = new TitleScene();
-        title.StartRequested += ChangeToPlay;
+        title.StartRequested += ChangeToSelectModeScene;
         Console.Clear();
         _scenes.ChangeScene(title);
     }
@@ -47,8 +47,18 @@ class BomberMan : GameApp
         _scenes.ChangeScene(play);
     }
 
+    private void ChangeToPlay2()
+    {
+        var play2 = new PlayScene2();
+        play2.PlayAgainRequested += ChangeToTitle;
+        _scenes.ChangeScene(play2);
+    }
+
     private void ChangeToSelectModeScene()
     {
-
+        var mode = new SelectModeScene();
+        mode.ModeRequested += ChangeToPlay;
+        mode.ModeRequested2 += ChangeToPlay2;
+        _scenes.ChangeScene(mode);
     }
 }

@@ -10,27 +10,29 @@ class Enemy : GameObject
     private float _moveCoolTime;
     private const char k_body = '●';
     private bool _canMove;
-    private int _power = 1;
     private int _bombCount = 1;
-    private Random _random = new Random();
     private bool _isWarning;
     private (int X, int Y) _bombPosition;
-    private int _direction;
-    
+    public List<(int, int)> Path;
+
     public bool IsDead { get; private set; } = false;
     public (int X, int Y) Position { get; private set; }
     public (int X, int Y) TempPosition { get; private set; }
     public List<Bomb> Bombs { get; private set; } = new List<Bomb>();
+    public int Power { get; private set; }
 
-    public event GameAction<(List<Bomb>, int)> BombSetted;
+
+    public event GameAction<(Bomb, int)> BombSetted;
+    public event GameAction<Bomb> EnemyBombRequest;
 
     public Enemy(Scene scene, (int x, int y) position) : base(scene)
     {
         Name = "Enemy";
 
-        _moveCoolTime = _moveInterval;
+        _moveCoolTime = 0;
         Position = position;
         _canMove = false;
+        TempPosition = Position;
     }
 
     public override void Draw(ScreenBuffer buffer)
@@ -38,31 +40,26 @@ class Enemy : GameObject
         buffer.SetCell(Position.X, Position.Y, k_body, ConsoleColor.DarkRed);
     }
 
+    public void PathRequest(List<(int, int)> path)
+    {
+        Path = path;
+    }
+
     private void Move()
     {
-        if(_canMove == false)
+        if(Path?.Count > 0)
         {
-            _direction = _random.Next(4);
+            TempPosition = Path.First();
+            Path.Remove(Path.First());
+        }
 
-            switch (_direction)
-            {
-                case 0:
-                    TempPosition = (Position.X - 1, Position.Y);
-                    break;
-                case 1:
-                    TempPosition = (Position.X, Position.Y - 1);
-                    break;
-                case 2:
-                    TempPosition = (Position.X + 1, Position.Y);
-                    break;
-                case 3:
-                    TempPosition = (Position.X, Position.Y + 1);
-                    break;
-            }
+        if(Path.Count == 0)
+        {
+            Path = null;
         }
     }
 
-    private void SetBomb()
+    public void SetBomb()
     {
         if (_bombCount > 0)
         {
@@ -74,9 +71,12 @@ class Enemy : GameObject
             }
 
             Bombs.Add(bomb);
+            EnemyBombRequest?.Invoke(bomb);
             base.Scene.AddGameObject(bomb);
             bomb.Bombed += DeleteBomb;
             bomb.Bombed += IsBombed;
+
+            BombSetted?.Invoke((bomb, Power));
 
             _bombPosition = bomb.Position;
 
@@ -84,9 +84,15 @@ class Enemy : GameObject
         }
     }
 
+    public void EnemyBombSetted(Bomb bomb)
+    {
+        bomb.Bombed += IsBombed;
+        _bombPosition = bomb.Position;
+    }
+
     private void IsBombed(Bomb bomb)
     {
-        if (Position.X >= bomb.Position.X - _power && Position.X <= bomb.Position.X + _power && Position.Y == bomb.Position.Y || Position.Y >= bomb.Position.Y - _power && Position.Y >= bomb.Position.Y + _power && Position.X == bomb.Position.X)
+        if (Position.X >= bomb.Position.X - Power && Position.X <= bomb.Position.X + Power && Position.Y == bomb.Position.Y || Position.Y >= bomb.Position.Y - Power && Position.Y >= bomb.Position.Y + Power && Position.X == bomb.Position.X)
         {
             if (_isWarning == true)
             {
@@ -108,16 +114,10 @@ class Enemy : GameObject
     {
         _canMove = !isWall;
 
-        if (Position == TempPosition)
-        {
-            _canMove = false;
-        }
-
         if (_bombPosition == TempPosition)
         {
             _canMove = false;
         }
-
     }
 
     public void DeleteBomb(Bomb bomb)
@@ -135,21 +135,20 @@ class Enemy : GameObject
             return;
         }
 
-        BombSetted?.Invoke((Bombs, _power));
-
-        if (_canMove == true)
-        {
-            Position = TempPosition;
-            TempPosition = default;
-            _moveCoolTime = _moveInterval;
-        }
-
         _moveCoolTime -= deltaTime;
         if (_moveCoolTime <= 0)
         {
-            SetBomb();
+            if (_canMove == true)
+            {
+                Position = TempPosition;
+                _moveCoolTime = _moveInterval;
+            }
+            else
+            {
+                SetBomb();
+            }
+
             Move();
-            _moveCoolTime = _moveInterval;
         }
     }
 
@@ -163,7 +162,7 @@ class Enemy : GameObject
 
     public void GetPowerItem()
     {
-        _power++;
+        Power++;
     }
 
     public void GetBombItem()

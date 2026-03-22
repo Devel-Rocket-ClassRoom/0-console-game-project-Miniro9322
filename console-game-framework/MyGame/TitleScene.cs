@@ -25,6 +25,6 @@ class TitleScene : Scene
         buffer.WriteTextCentered(8, "Arrows Keys: Move");
         buffer.WriteTextCentered(10, "Z: Bomb");
         buffer.WriteTextCentered(12, "ESC: Quit");
-        buffer.WriteTextCentered(15, "Press ENTER to Start", ConsoleColor.Green);
+        buffer.WriteTextCentered(15, "Press ENTER to Select Mode", ConsoleColor.Green);
     }
 }

@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Framework.Engine;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
-using Framework.Engine;
 
 class Map : GameObject 
 {
@@ -16,7 +19,7 @@ class Map : GameObject
         {
             new Tile(scene, (14, 5),' '), new Tile(scene, (15, 5),' '), new Tile(scene, (16, 5),' '), new Tile(scene, (17, 5),' '), new Tile(scene, (18, 5),'█'), new Tile(scene, (19, 5),'█'), new Tile(scene, (20, 5),'█'), new Tile(scene, (21, 5),'█'), new Tile(scene, (22, 5),'█'), new Tile(scene, (23, 5),'░'), new Tile(scene, (24, 5),' '), new Tile(scene, (25, 5),' '), new Tile(scene, (26, 5),' '),
             new Tile(scene, (14, 6),' '), new Tile(scene, (15, 6),'█'), new Tile(scene, (16, 6),' '), new Tile(scene, (17, 6),' '), new Tile(scene, (18, 6),'█'), new Tile(scene, (19, 6),'█'), new Tile(scene, (20, 6),'█'), new Tile(scene, (21, 6),'█'), new Tile(scene, (22, 6),'█'), new Tile(scene, (23, 6),'█'), new Tile(scene, (24, 6),' '), new Tile(scene, (25, 6),'█'), new Tile(scene, (26, 6),' '),
-            new Tile(scene, (14, 7),' '), new Tile(scene, (15, 7),' '), new Tile(scene, (16, 7),' '), new Tile(scene, (17, 7),' '), new Tile(scene, (18, 7),'░'), new Tile(scene, (19, 7),'░'), new Tile(scene, (20, 7),'░'), new Tile(scene, (21, 7),'░'), new Tile(scene, (22, 7),' '), new Tile(scene, (23, 7),' '), new Tile(scene, (24, 7),' '), new Tile(scene, (25, 7),' '), new Tile(scene, (26, 7),' '),
+            new Tile(scene, (14, 7),' '), new Tile(scene, (15, 7),' '), new Tile(scene, (16, 7),' '), new Tile(scene, (17, 7),'░'), new Tile(scene, (18, 7),'░'), new Tile(scene, (19, 7),'░'), new Tile(scene, (20, 7),'░'), new Tile(scene, (21, 7),'░'), new Tile(scene, (22, 7),' '), new Tile(scene, (23, 7),' '), new Tile(scene, (24, 7),' '), new Tile(scene, (25, 7),' '), new Tile(scene, (26, 7),' '),
             new Tile(scene, (14, 8),' '), new Tile(scene, (15, 8),'█'), new Tile(scene, (16, 8),' '), new Tile(scene, (17, 8),'█'), new Tile(scene, (18, 8),'░'), new Tile(scene, (19, 8),'█'), new Tile(scene, (20, 8),'░'), new Tile(scene, (21, 8),'█'), new Tile(scene, (22, 8),'░'), new Tile(scene, (23, 8),'█'), new Tile(scene, (24, 8),' '), new Tile(scene, (25, 8),'█'), new Tile(scene, (26, 8),'░'),
             new Tile(scene, (14, 9),'░'), new Tile(scene, (15, 9),'░'), new Tile(scene, (16, 9),'░'), new Tile(scene, (17, 9),'░'), new Tile(scene, (18, 9),'░'), new Tile(scene, (19, 9),'░'), new Tile(scene, (20, 9),'░'), new Tile(scene, (21, 9),'░'), new Tile(scene, (22, 9),' '), new Tile(scene, (23, 9),'░'), new Tile(scene, (24, 9),'░'), new Tile(scene, (25, 9),'░'), new Tile(scene, (26, 9),'░'),
             new Tile(scene, (14, 10),' '), new Tile(scene, (15, 10),' '), new Tile(scene, (16, 10),' '), new Tile(scene, (17, 10),' '), new Tile(scene, (18, 10),'░'), new Tile(scene, (19, 10),'█'), new Tile(scene, (20, 10),'░'), new Tile(scene, (21, 10),'█'), new Tile(scene, (22, 10),'░'), new Tile(scene, (23, 10),'█'), new Tile(scene, (24, 10),'░'), new Tile(scene, (25, 10),'█'), new Tile(scene, (26, 10),'░'),
@@ -38,122 +41,154 @@ class Map : GameObject
 
     public bool OnWarning((int, int) position)
     {
-        foreach (var tile in Tiles)
+        var tile = Tiles.Find(x => x.Position == position);
+
+        if (tile == null)
         {
-            if (tile.Position == position)
-            {
-                return tile.IsWarning;
-            }
+            return false;
         }
-        return false;
+
+        return tile.IsWarning;
     }
 
-    public void BombSetted((List<Bomb> bombs, int power) info)
+    public void BombSetted((Bomb bomb, int power) info)
     {
-        foreach(var bomb in info.bombs)
+        int index = 0;
+
+        var tile = Tiles.Find(x => x.Position == info.bomb.Position);
+
+        index = Tiles.IndexOf(tile);
+
+
+        Tiles[index].TileUpdate();
+        info.bomb.Bombed += Tiles[index].OnBomebed;
+
+        for (int i = 1; i <= info.power; i++)
         {
-            int index = 0;
-
-            var query = Tiles
-            .Where(n => n.Position == bomb.Position)
-            .Select(n => n).ToList();
-
-
-            foreach(var tile in query)
+            if(index - i < 0)
             {
-                index = Tiles.IndexOf(tile);
+                break;
             }
 
-            Tiles[index].TileUpdate();
-            bomb.Bombed += Tiles[index].OnBomebed;
-
-            for (int i = 1; i <= info.power; i++)
+            if(Tiles[index - i].Position.Y != Tiles[index].Position.Y)
             {
-                if(index - i < 0)
-                {
-                    break;
-                }
-
-                if(Tiles[index - i].Position.Y != Tiles[index].Position.Y)
-                {
-                    break;
-                }
-
-                Tiles[index - i].TileUpdate();
-                bomb.Bombed += Tiles[index - i].OnBomebed;
-
-                if (Tiles[index - i].IsWall == true)
-                {
-                    break;
-                }
+                break;
             }
 
-            for (int i = 1; i <= info.power; i++)
+            Tiles[index - i].TileUpdate();
+            info.bomb.Bombed += Tiles[index - i].OnBomebed;
+
+            if (Tiles[index - i].IsWall == true)
             {
-                if(index + i >= Tiles.Count)
-                {
-                    break;
-                }
+                break;
+            }
+        }
 
-                if (Tiles[index + i].Position.Y != Tiles[index].Position.Y)
-                {
-                    break;
-                }
-
-                Tiles[index + i].TileUpdate();
-                bomb.Bombed += Tiles[index + i].OnBomebed;
-
-                if (Tiles[index + i].IsWall == true)
-                {
-                    break;
-                }
+        for (int i = 1; i <= info.power; i++)
+        {
+            if(index + i >= Tiles.Count)
+            {
+                break;
             }
 
-            for (int i = 1; i <= info.power; i++)
+            if (Tiles[index + i].Position.Y != Tiles[index].Position.Y)
             {
-                if(index - 13 * i < 0)
-                {
-                    break;
-                }
-
-                Tiles[index - 13 * i].TileUpdate();
-                bomb.Bombed += Tiles[index - 13 * i].OnBomebed;
-                if (Tiles[index - 13 * i].IsWall == true)
-                {
-                    break;
-                }
+                break;
             }
 
-            for (int i = 1; i <= info.power; i++)
-            {
-                if (index + 13 * i >= Tiles.Count)
-                {
-                    break;
-                }
+            Tiles[index + i].TileUpdate();
+            info.bomb.Bombed += Tiles[index + i].OnBomebed;
 
-                Tiles[index + 13*i].TileUpdate();
-                bomb.Bombed += Tiles[index + 13 * i].OnBomebed;
-                if (Tiles[index + 13 * i].IsWall == true)
-                {
-                    break;
-                }
+            if (Tiles[index + i].IsWall == true)
+            {
+                break;
+            }
+        }
+
+        for (int i = 1; i <= info.power; i++)
+        {
+            if(index - 13 * i < 0)
+            {
+                break;
+            }
+
+            Tiles[index - 13 * i].TileUpdate();
+            info.bomb.Bombed += Tiles[index - 13 * i].OnBomebed;
+            if (Tiles[index - 13 * i].IsWall == true)
+            {
+                break;
+            }
+        }
+
+        for (int i = 1; i <= info.power; i++)
+        {
+            if (index + 13 * i >= Tiles.Count)
+            {
+                break;
+            }
+
+            Tiles[index + 13*i].TileUpdate();
+            info.bomb.Bombed += Tiles[index + 13 * i].OnBomebed;
+            if (Tiles[index + 13 * i].IsWall == true)
+            {
+                break;
             }
         }
     }
 
     public bool CheckWall((int X, int Y) position)
     {
-        foreach( var tile in Tiles)
+        var tile = Tiles.Find(x => x.Position == position);
+
+        if(tile == null)
         {
-            if(tile.Position == position)
-            {
-                return tile.IsWall;
-            }
+            return true;
         }
-        return true;
+        if(tile.IsBomb == true)
+        {
+            return tile.IsBomb;
+        }
+
+        return tile.IsWall;
+    }
+
+    public bool CheckDestoryable((int X, int Y) position)
+    {
+        var tile = Tiles.Find(x => x.Position == position);
+
+        if( tile == null)
+        {
+            return false;
+        }
+        return tile.IsDestroyable;
     }
 
     public void CheckItem(Player player)
+    {
+        foreach (var tile in Tiles)
+        {
+            if (tile.SpeedItem?.Position == player.Position)
+            {
+                player.GetSpeedItem();
+                tile.SpeedItemGetted();
+                break;
+            }
+            if (tile.PowerItem?.Position == player.Position)
+            {
+                player.GetPowerItem();
+                tile.PowerItemGetted();
+                break;
+            }
+            if (tile.BombItem?.Position == player.Position)
+            {
+                player.GetBombItem();
+                tile.BombItemGetted();
+                break;
+            }
+        }
+    }
+
+    public void CheckItem(Player2 player)
     {
         foreach (var tile in Tiles)
         {
@@ -206,5 +241,129 @@ class Map : GameObject
     public override void Update(float deltaTime)
     {
 
+    }
+
+    public List<(int, int)> ChasePlayer((int x, int y) start, (int x, int y) goal)
+    {
+        var first = Tiles.Find(x => x.Position == start);
+        
+        Queue<Tile> bfs = new Queue<Tile>();
+        HashSet<Tile> visited = new HashSet<Tile>();
+        Dictionary<Tile, Tile> parent = new Dictionary<Tile, Tile>();
+
+        bfs.Enqueue(first);
+        visited.Add(first);
+
+        while (bfs.Count > 0)
+        {
+            var current = bfs.Dequeue();
+
+            if(current.Position == goal)
+            {
+                List<(int, int)> path = new List<(int, int)> ();
+
+                while (parent.ContainsKey(current))
+                {
+                    path.Add(current.Position);
+                    current = parent[current];
+                }
+
+                path.Reverse();
+                return path;
+            }
+
+            var index = Tiles.IndexOf(current);
+
+            if (index + 1 < Tiles.Count && visited.Contains(Tiles[index + 1]) == false && Tiles[index + 1].Position.Y == current.Position.Y && (Tiles[index + 1].IsWall != true || Tiles[index + 1].IsWall == true && Tiles[index + 1].IsDestroyable == true))
+            {
+                bfs.Enqueue(Tiles[index + 1]);
+                visited.Add(Tiles[index + 1]);
+                parent[Tiles[index + 1]] = current;
+            }
+
+            if (index - 1 >= 0 && visited.Contains(Tiles[index - 1]) == false && Tiles[index - 1].Position.Y == current.Position.Y && (Tiles[index - 1].IsWall != true || Tiles[index - 1].IsWall == true && Tiles[index - 1].IsDestroyable == true))
+            {
+                bfs.Enqueue(Tiles[index - 1]);
+                visited.Add(Tiles[index - 1]);
+                parent[Tiles[index - 1]] = current;
+            }
+
+            if (index + 13 < Tiles.Count && visited.Contains(Tiles[index + 13]) == false && Tiles[index + 13].Position.X == current.Position.X && (Tiles[index + 13].IsWall != true || Tiles[index + 13].IsWall == true && Tiles[index + 13].IsDestroyable == true))
+            {
+                bfs.Enqueue(Tiles[index + 13]);
+                visited.Add(Tiles[index + 13]);
+                parent[Tiles[index + 13]] = current;
+            }
+
+            if (index - 13 >=0 && visited.Contains(Tiles[index - 13]) == false && Tiles[index - 13].Position.X == current.Position.X && (Tiles[index - 13].IsWall != true || Tiles[index - 13].IsWall == true && Tiles[index - 13].IsDestroyable == true))
+            {
+                bfs.Enqueue(Tiles[index - 13]);
+                visited.Add(Tiles[index - 13]);
+                parent[Tiles[index - 13]] = current;
+            }
+        }
+        return null;
+    }
+
+    public List<(int, int)> FindSafe((int x, int y) start)
+    {
+        var first = Tiles.Find(x => x.Position == start);
+
+        Queue<Tile> bfs = new Queue<Tile>();
+        HashSet<Tile> visited = new HashSet<Tile>();
+        Dictionary<Tile, Tile> parent = new Dictionary<Tile, Tile>();
+
+        bfs.Enqueue(first);
+        visited.Add(first);
+
+        while (bfs.Count > 0)
+        {
+            var current = bfs.Dequeue();
+            
+            var index = Tiles.IndexOf(current);
+
+            if (Tiles[index].IsWall == false && Tiles[index].IsWarning == false)
+            {
+                List<(int, int)> path = new List<(int, int)>();
+                
+                while (parent.ContainsKey(current))
+                {
+                    path.Add(current.Position);
+                    current = parent[current];    
+                }
+
+                path.Reverse();
+                return path;
+            }
+
+            if (index + 1 < Tiles.Count && visited.Contains(Tiles[index + 1]) == false && Tiles[index + 1].Position.Y == current.Position.Y && Tiles[index + 1].IsWall != true)
+            {
+                bfs.Enqueue(Tiles[index + 1]);
+                visited.Add(Tiles[index + 1]);
+                parent[Tiles[index + 1]] = current;
+            }
+
+            if (index - 1 >= 0 && visited.Contains(Tiles[index - 1]) == false && Tiles[index - 1].Position.Y == current.Position.Y && Tiles[index - 1].IsWall != true)
+            {
+                bfs.Enqueue(Tiles[index - 1]);
+                visited.Add(Tiles[index - 1]);
+                parent[Tiles[index - 1]] = current;
+            }
+
+            if (index + 13 < Tiles.Count && visited.Contains(Tiles[index + 13]) == false && Tiles[index + 13].Position.X == current.Position.X && Tiles[index + 13].IsWall != true)
+            {
+                bfs.Enqueue(Tiles[index + 13]);
+                visited.Add(Tiles[index + 13]);
+                parent[Tiles[index + 13]] = current;
+            }
+
+            if (index - 13 >= 0 && visited.Contains(Tiles[index - 13]) == false && Tiles[index - 13].Position.X == current.Position.X && Tiles[index - 13].IsWall != true)
+            {
+                bfs.Enqueue(Tiles[index - 13]);
+                visited.Add(Tiles[index - 13]);
+                parent[Tiles[index - 13]] = current;
+            }
+        }
+        return null;
     }
 }

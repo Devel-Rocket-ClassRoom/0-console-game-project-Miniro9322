@@ -15,7 +15,7 @@ class Tile : GameObject
     private char _originalTile;
 
     private const float k_BombInterval = 2.0f;
-    private float _bombTimer;
+    public bool IsBomb { get; private set; } = false;
 
     private ConsoleColor _color = ConsoleColor.Gray;
 
@@ -33,8 +33,6 @@ class Tile : GameObject
         _tile = type;
         _originalTile = _tile;
         Position = position;
-
-        _bombTimer = k_BombInterval;
 
         switch (type)
         {
@@ -71,6 +69,11 @@ class Tile : GameObject
             _color = ConsoleColor.Red;
         }
         IsWarning = true;
+    }
+
+    public void Bombset()
+    {
+        IsBomb = true;
     }
 
     public void SpeedItemGetted()
@@ -125,11 +128,11 @@ class Tile : GameObject
             }
             IsWall = false;
             IsDestroyable = false;
+            IsBomb = false;
         }
         else
         {
             _tile = _originalTile;
-
         }
     }
 }

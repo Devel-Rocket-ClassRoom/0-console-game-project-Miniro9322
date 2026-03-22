@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Framework.Engine;
 
-class Player : GameObject
+class Player2 : GameObject
 {
     private float _moveInterval = 0.3f;
     private float _moveCoolTime;
@@ -22,7 +22,7 @@ class Player : GameObject
     public event GameAction<(Bomb, int)> BombSetted;
     public event GameAction<Bomb> EnemyBombRequest;
 
-    public Player(Scene scene, (int x, int y) position) : base(scene)
+    public Player2(Scene scene, (int x, int y) position) : base(scene)
     {
         Name = "Player";
 
@@ -34,24 +34,24 @@ class Player : GameObject
 
     public override void Draw(ScreenBuffer buffer)
     {
-        buffer.SetCell(Position.X, Position.Y, k_body, ConsoleColor.Blue);
+        buffer.SetCell(Position.X, Position.Y, k_body, ConsoleColor.DarkRed);
     }
 
     private void Move()
     {
-        if (Input.IsKey(ConsoleKey.LeftArrow))
+        if (Input.IsKey(ConsoleKey.A))
         {
             TempPosition = (Position.X - 1, Position.Y);
         }
-        else if (Input.IsKey(ConsoleKey.UpArrow))
+        else if (Input.IsKey(ConsoleKey.W))
         {
             TempPosition = (Position.X, Position.Y - 1);
         }
-        else if (Input.IsKey(ConsoleKey.RightArrow))
+        else if (Input.IsKey(ConsoleKey.D))
         {
             TempPosition = (Position.X + 1, Position.Y);
         }
-        else if (Input.IsKey(ConsoleKey.DownArrow))
+        else if (Input.IsKey(ConsoleKey.S))
         {
             TempPosition = (Position.X, Position.Y + 1);
         }
@@ -59,7 +59,7 @@ class Player : GameObject
 
     private void SetBomb()
     {
-        if (Input.IsKeyDown(ConsoleKey.NumPad0))
+        if (Input.IsKeyDown(ConsoleKey.Spacebar))
         {
             if(_bombCount > 0)
             {
@@ -130,7 +130,6 @@ class Player : GameObject
     public void EnemyBombSetted(Bomb bomb)
     {
         bomb.Bombed += IsBombed;
-        _bombPosition = bomb.Position;
     }
 
     public override void Update(float deltaTime)
